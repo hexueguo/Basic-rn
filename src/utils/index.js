@@ -1,4 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, PermissionsAndroid } from "react-native";
+import forge from "node-forge";
+import ImagePicker from "react-native-image-picker";
+import { wgs84togcj02 } from "./coordinateTransfer";
 
 // export { NavigationActions, StackActions } from "react-navigation";
 
@@ -71,3 +74,120 @@ export function timeToSecond(time) {
 
   return s;
 }
+
+// ---------------  图片上传  begin----------------
+
+const imgThen = (func, options, resolve, reject) => {
+  func(options, response => {
+    // console.log("Response = ", response);
+
+    if (response.didCancel) {
+      // console.log("User cancelled image picker");
+      reject(response);
+    } else if (response.error) {
+      // console.log("ImagePicker Error: ", response.error);
+    } else if (response.customButton) {
+      // console.log("User tapped custom button: ", response.customButton);
+    } else {
+      // const source = { uri: response.uri };
+      // You can also display the image using data:
+      // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+      resolve(response);
+    }
+  });
+};
+
+export const launchCamera = (options = {}) => {
+  return new Promise((resolve, reject) => {
+    imgThen(ImagePicker.launchCamera, options, resolve, reject);
+  });
+};
+
+export const chooseLibraryImage = (options = {}) => {
+  return new Promise((resolve, reject) => {
+    imgThen(ImagePicker.launchImageLibrary, options, resolve, reject);
+  });
+};
+
+export const showImageChooser = (customOpts = {}) => {
+  const options = {
+    title: "选择图片",
+    customButtons: [
+      // { name: "fb", title: "Choose Photo from Facebook" },
+    ],
+    cancelButtonTitle: "取消",
+    takePhotoButtonTitle: "拍照",
+    chooseFromLibraryButtonTitle: "从相册选取",
+    storageOptions: {
+      skipBackup: true,
+      path: "images",
+    },
+    ...customOpts,
+  };
+
+  /**
+   * The first arg is the options object for customization (it can also be null or omitted for default options),
+   * The second arg is the callback which sends object: response (more info below in README)
+   */
+  return new Promise((resolve, reject) => {
+    imgThen(ImagePicker.showImagePicker, options, resolve, reject);
+  });
+};
+
+// ---------------  图片上传  end----------------
+
+/**
+ * 经纬度
+ * @param {*} coords
+ */
+export const coordsGPS2Amap = coords => {
+  const [longitude, latitude] = wgs84togcj02(coords.longitude, coords.latitude);
+  return { longitude, latitude };
+};
+
+/**
+ * 获取指多个权限
+ * @param permissionType 权限类型数组
+ * 详细见官方文档 https://reactnative.cn/docs/permissionsandroid/
+ */
+export const getMultiplPermissions = permissionTypes => {
+  return new Promise(resolve => {
+    resolve(PermissionsAndroid.requestMultiple(permissionTypes));
+  });
+};
+
+/**
+ * 检查是否已获取指定权限
+ * @param permissionType 权限类型
+ * 详细见官方文档 https://reactnative.cn/docs/permissionsandroid/
+ */
+export const checekPermissions = permissionType => {
+  return new Promise(resolve => {
+    resolve(PermissionsAndroid.check(permissionType));
+  });
+};
+
+/**
+ * 工具方法，获取一个UUID
+ * @returns UUID
+ */
+export const getUUID = () => {
+  // return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+  return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
+/**
+ * md5加密操作
+ * @param password 密码
+ * @param key 加密值
+ * @returns 加密之后的字符串
+ */
+export const md5Encryption = (password, key) => {
+  const md = forge.md.md5.create();
+  md.update(`${password}${key}`);
+  return md.digest().toHex();
+};

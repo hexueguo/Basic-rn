@@ -1,19 +1,23 @@
-import { delay } from "../utils";
+/**
+ * 登录模块（包括：登录、注销登录、忘记密码；但不含注册流程相关接口）
+ */
+import { getQrCodeUrl } from "../services/home";
 
 export default {
   namespace: "home",
-  state: {
-    title: "...",
-  },
+  state: {},
 
   effects: {
-    *fetch(_, { call, put }) {
-      yield call(delay, 4000);
-      yield put({ type: "save/title", payload: "首页" });
+    // 获取二维码
+    *getQrCodeUrl({ payload }, { call }) {
+      const res = yield call(getQrCodeUrl, payload);
+      return res;
     },
   },
   reducers: {
-    "save/title": (state, { payload }) => ({ ...state, title: payload }),
+    render: state => ({
+      ...state,
+    }),
   },
   // subscriptions: {
   //   setup({ dispatch }) {

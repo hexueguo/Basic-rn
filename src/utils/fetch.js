@@ -1,6 +1,7 @@
 import { Toast } from "@ant-design/react-native";
 import config from "config";
 import { getQuery } from "./index";
+import { clearUserInfo } from "./logout";
 
 const codeMessage = {
   200: "服务器成功返回请求的数据。",
@@ -33,11 +34,12 @@ function checkStatus(response) {
 
 // 业务成功检查
 const checkCode = response => {
-  const { errCode, loginCode } = config;
+  const { errCode } = config;
   // 登录的权限失效
-  if (`${response.errCode}` === `${loginCode}`) {
+  if (`${response.errCode}` === "1000000") {
     // 清除用户信息，跳转到登录页
     Toast.info("登录已过期！", 1);
+    clearUserInfo();
     return response;
   } else if (`${response.errCode}` === `${errCode}`) {
     // 正常的请求返回

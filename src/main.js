@@ -49,6 +49,19 @@ class Router extends PureComponent {
       dispatch(NavigationActions.back());
       return true;
     }
+    // 需要忽略的tab路由组，让其不会后退
+    const ignoreRouters = [
+      "Member",
+      "Home",
+      "Video",
+      "Message",
+      "Mine",
+      "Demo",
+    ];
+    if (!ignoreRouters.includes(currentScreen)) {
+      dispatch(NavigationActions.back());
+      return true;
+    }
     return false;
   };
 
