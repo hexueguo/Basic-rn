@@ -29,8 +29,8 @@ class MyHeader extends Component {
     const { isShow } = this.state;
     const { personData = {} } = this.props;
     const {
-      guardianName = "无数据",
-      guardianPhoto = "无数据",
+      guardianName = "暂无数据",
+      guardianPhoto = "暂无数据",
       userName = "无数据",
     } = personData;
     const x = userName.substring(3, 7);

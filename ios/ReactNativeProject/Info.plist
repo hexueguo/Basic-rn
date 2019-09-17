@@ -72,6 +72,8 @@
 		<string>Zocial.ttf</string>
 		<string>anticon.ttf</string>
 		<string>iconfont.ttf</string>
+		<string>antfill.ttf</string>
+		<string>antoutline.ttf</string>
 	</array>
 </dict>
 </plist>

@@ -1,4 +1,9 @@
-import { StyleSheet, PermissionsAndroid } from "react-native";
+import {
+  StyleSheet,
+  PermissionsAndroid,
+  findNodeHandle,
+  UIManager,
+} from "react-native";
 import forge from "node-forge";
 import ImagePicker from "react-native-image-picker";
 import { wgs84togcj02 } from "./coordinateTransfer";
@@ -190,4 +195,24 @@ export const md5Encryption = (password, key) => {
   const md = forge.md.md5.create();
   md.update(`${password}${key}`);
   return md.digest().toHex();
+};
+
+/**
+ * 动态获取某个组件的位置和高度、宽度信息
+ * @param ref 组件的实例
+ */
+export const measureRef = ref => {
+  const handle = findNodeHandle(ref);
+  return new Promise(resolve => {
+    UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
+      resolve({
+        x,
+        y,
+        width,
+        height,
+        pageX,
+        pageY,
+      });
+    });
+  });
 };

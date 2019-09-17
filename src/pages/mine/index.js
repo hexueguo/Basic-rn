@@ -69,7 +69,7 @@ class Mine extends Component {
       <Text style={{ lineHeight: 70, color: ColorFontBase, fontSize: 18 }}>
         确认退出登录？
       </Text>,
-      null,
+      "",
       [
         {
           text: (

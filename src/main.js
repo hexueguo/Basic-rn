@@ -7,7 +7,6 @@ import {
   createNavigationReducer,
 } from "react-navigation-redux-helpers";
 import { connect } from "react-redux";
-import Loading from "components/Loading";
 import AppRouter from "./router";
 
 export const routerReducer = createNavigationReducer(AppRouter);
@@ -66,14 +65,12 @@ class Router extends PureComponent {
   };
 
   render() {
-    const { publicData, dispatch, router } = this.props;
-    if (publicData.loading) return <Loading />;
+    const { dispatch, router } = this.props;
 
     return <App dispatch={dispatch} state={router} />;
   }
 }
 
 export default connect(stores => ({
-  publicData: stores.public,
   router: stores.router,
 }))(Router);

@@ -1,8 +1,9 @@
 import React from "react";
 import { AppRegistry } from "react-native";
+import { Provider } from "@ant-design/react-native";
+import { storage } from "@cbd/utils-rn";
 import Router, { routerMiddleware, routerReducer } from "./main";
 import dva from "./utils/dva";
-
 // import demoModel from "./models/public";
 // import homeModel from "./models/home";
 import loginModel from "./models/login";
@@ -35,6 +36,18 @@ const app = dva({
   },
 });
 
+/* 初始化空的用户信息 */
+GLOBAL.userInfo = {};
+storage.get("userInfo").then(res => {
+  if (res) {
+    GLOBAL.userInfo = res;
+    // if (global.__DEV__) {
+    // console.log("postman header cookie");
+    // console.log(`session=${res.userToken}` || "");
+    // }
+  }
+});
+
 if (global.__DEV__) {
   // global.XMLHttpRequest = global.originalXMLHttpRequest
   //   ? global.originalXMLHttpRequest
@@ -48,7 +61,13 @@ if (global.__DEV__) {
   //   : global.FileReader;
 }
 
-const App = app.start(<Router />);
+const App = app.start(
+  <Provider>
+    <Router />
+  </Provider>
+);
+
+global.app = app;
 
 // eslint-disable-next-line no-console
 console.disableYellowBox = true; // 关闭全部黄色警告
